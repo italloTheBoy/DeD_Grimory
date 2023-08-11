@@ -34,9 +34,8 @@ defmodule DedGrimoryWeb.MagicController do
   end
 
   def delete(conn, %{"id" => id}) do
-    magic = Grimory.get_magic!(id)
-
-    with {:ok, %Magic{}} <- Grimory.delete_magic(magic) do
+    with {:ok, %Magic{} = magic} <- Grimory.get_magic(id),
+         {:ok, %Magic{}} <- Grimory.delete_magic(magic) do
       send_resp(conn, :no_content, "")
     end
   end

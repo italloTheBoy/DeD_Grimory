@@ -81,7 +81,7 @@ defmodule DedGrimory.Grimory do
           Magic.t(),
           :invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}
         ) ::
-          {:ok, Magic.t()} | {:error, Ecto.Changeset.t}
+          {:ok, Magic.t()} | {:error, Ecto.Changeset.t()}
   @doc """
   Updates a magic.
 
@@ -100,6 +100,8 @@ defmodule DedGrimory.Grimory do
     |> Repo.update()
   end
 
+  @spec delete_magic(Magic.t()) ::
+          {:ok, Magic.t()} | {:error, Ecto.Changeset.t()}
   @doc """
   Deletes a magic.
 
