@@ -15,21 +15,22 @@ defmodule DedGrimoryWeb.MagicController do
     with {:ok, %Magic{} = magic} <- Grimory.create_magic(magic_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/magics/#{magic.id}")
-      |> render(:show, magic: magic)
+      |> put_resp_header("location", ~p"/api/magic/#{magic.id}")
+      |> render(:identfy, magic: magic)
     end
   end
 
   def show(conn, %{"id" => id}) do
-    magic = Grimory.get_magic!(id)
-    render(conn, :show, magic: magic)
+    with {:ok, %Magic{} = magic} <- Grimory.get_magic(id) do
+      render(conn, :show, magic: magic)
+    end
   end
 
   def update(conn, %{"id" => id, "magic" => magic_params}) do
     magic = Grimory.get_magic!(id)
 
     with {:ok, %Magic{} = magic} <- Grimory.update_magic(magic, magic_params) do
-      render(conn, :show, magic: magic)
+      render(conn, :identfy, magic: magic)
     end
   end
 

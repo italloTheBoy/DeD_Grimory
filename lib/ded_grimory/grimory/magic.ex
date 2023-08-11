@@ -9,6 +9,23 @@ defmodule DedGrimory.Grimory.Magic do
 
   alias DedGrimory.Grimory.Magic
 
+  @permitted_columns [
+    :name,
+    :level,
+    :description,
+    :range,
+    :components,
+    :book,
+    :school,
+    :casting_time,
+    :material,
+    :buff_description,
+    :ritual,
+    :concentration
+  ]
+
+  @derive {Jason.Encoder, only: @permitted_columns}
+
   schema "magics" do
     field :name, :string
     field :level, :integer
@@ -16,9 +33,9 @@ defmodule DedGrimory.Grimory.Magic do
     field :buff_description, :string
     field :range, :float
     field :components, {:array, :string}
-    field :book, :string, default: "Livro do Jogador"
+    field :book, :string
     field :school, :string
-    field :casting_time, :string, default: "action"
+    field :casting_time, :string
     field :material, :string
     field :ritual, :boolean, default: false
     field :concentration, :boolean, default: false
@@ -38,21 +55,6 @@ defmodule DedGrimory.Grimory.Magic do
           ritual: boolean(),
           concentration: boolean()
         }
-
-  @permitted_columns [
-    :name,
-    :level,
-    :description,
-    :range,
-    :components,
-    :book,
-    :school,
-    :casting_time,
-    :material,
-    :buff_description,
-    :ritual,
-    :concentration
-  ]
 
   @permitted_schools [
     "abjuration",
@@ -87,10 +89,7 @@ defmodule DedGrimory.Grimory.Magic do
   defp validate_name(%Ecto.Changeset{} = changeset) do
     changeset
     |> validate_required([:name], message: "Informe o nome da magia")
-    |> unsafe_validate_unique([:name, :company_id], DedMagicsApi.Repo,
-      message: "Esta magia ja foi registrada"
-    )
-    |> unique_constraint([:name, :company_id], message: "Esta magia ja foi registrada")
+    |> unique_constraint(:name, message: "Esta magia ja foi registrada")
   end
 
   defp validate_level(%Ecto.Changeset{} = changeset) do

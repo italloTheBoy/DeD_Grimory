@@ -37,6 +37,17 @@ defmodule DedGrimory.Grimory do
   """
   def get_magic!(id), do: Repo.get!(Magic, id)
 
+  @spec get_magic(term) ::
+          {:error, :not_found | :unprocessable_entity} | {:ok, Magic.t()}
+  def get_magic(id) do
+    case Repo.get(Magic, id) do
+      %Magic{} = magic -> {:ok, magic}
+      nil -> {:error, :not_found}
+    end
+  rescue
+    _ -> {:error, :unprocessable_entity}
+  end
+
   @doc """
   Creates a magic.
 

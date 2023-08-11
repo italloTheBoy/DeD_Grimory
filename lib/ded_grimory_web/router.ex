@@ -24,7 +24,7 @@ defmodule DedGrimoryWeb.Router do
     pipe_through :api
 
     get "/", PageController, :home
-    resources "/magics", MagicController
+    resources "/magic", MagicController
   end
 
   # Other scopes may use custom stacks.
