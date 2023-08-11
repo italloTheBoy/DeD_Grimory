@@ -8,7 +8,7 @@ defmodule DedGrimoryWeb.MagicController do
 
   def index(conn, _params) do
     magics = Grimory.list_magics()
-    render(conn, :index, magics: magics)
+    render(conn, :list, magics: magics)
   end
 
   def create(conn, %{"magic" => magic_params}) do

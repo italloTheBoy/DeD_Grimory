@@ -8,6 +8,7 @@ defmodule DedGrimory.Grimory do
 
   alias DedGrimory.Grimory.Magic
 
+  @spec list_magics() :: [Magic.t()]
   @doc """
   Returns the list of magics.
 
