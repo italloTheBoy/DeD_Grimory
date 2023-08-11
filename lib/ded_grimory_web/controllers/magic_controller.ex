@@ -27,10 +27,9 @@ defmodule DedGrimoryWeb.MagicController do
   end
 
   def update(conn, %{"id" => id, "magic" => magic_params}) do
-    magic = Grimory.get_magic!(id)
-
-    with {:ok, %Magic{} = magic} <- Grimory.update_magic(magic, magic_params) do
-      render(conn, :identfy, magic: magic)
+    with {:ok, %Magic{} = magic} <- Grimory.get_magic(id),
+         {:ok, %Magic{} = updated_magic} <- Grimory.update_magic(magic, magic_params) do
+      render(conn, :identfy, magic: updated_magic)
     end
   end
 

@@ -39,6 +39,17 @@ defmodule DedGrimory.Grimory do
 
   @spec get_magic(term) ::
           {:error, :not_found | :unprocessable_entity} | {:ok, Magic.t()}
+  @doc """
+  Gets a single magic.
+
+  ## Examples
+
+      iex> get_magic(id)
+      {:ok, %User{}}
+
+      iex> get_magic(bad_id)
+      {:error, :not_found}
+  """
   def get_magic(id) do
     case Repo.get(Magic, id) do
       %Magic{} = magic -> {:ok, magic}
@@ -66,6 +77,11 @@ defmodule DedGrimory.Grimory do
     |> Repo.insert()
   end
 
+  @spec update_magic(
+          Magic.t(),
+          :invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}
+        ) ::
+          {:ok, Magic.t()} | {:error, Ecto.Changeset.t}
   @doc """
   Updates a magic.
 
