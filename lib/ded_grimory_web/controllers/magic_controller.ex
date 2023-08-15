@@ -23,6 +23,12 @@ defmodule DedGrimoryWeb.MagicController do
   end
 
   @spec show(any, map) :: Plug.Conn.t() | {:error, term()}
+  def show(conn, %{"name" => name}) do
+    with {:ok, %Magic{} = magic} <- Grimory.get_magic(name: name) do
+      render(conn, :show, magic: magic)
+    end
+  end
+
   def show(conn, %{"id" => id}) do
     with {:ok, %Magic{} = magic} <- Grimory.get_magic(id) do
       render(conn, :show, magic: magic)

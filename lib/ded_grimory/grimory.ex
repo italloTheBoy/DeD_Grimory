@@ -38,7 +38,7 @@ defmodule DedGrimory.Grimory do
   """
   def get_magic!(id), do: Repo.get!(Magic, id)
 
-  @spec get_magic(term) ::
+  @spec get_magic(term()) ::
           {:error, :not_found | :unprocessable_entity} | {:ok, Magic.t()}
   @doc """
   Gets a single magic.
@@ -46,11 +46,34 @@ defmodule DedGrimory.Grimory do
   ## Examples
 
       iex> get_magic(id)
-      {:ok, %User{}}
+      {:ok, %Magic{}}
+
+      iex> get_magic(id: id)
+      {:ok, %Magic{}}
+
+      iex> get_magic(name: "name")
+      {:ok, %Magic{}}
 
       iex> get_magic(bad_id)
       {:error, :not_found}
+
+      iex> get_magic(id: bad_id)
+      {:error, :not_found}
+
+      iex> get_magic(name: bad_name)
+      {:error, :not_found}
   """
+  def get_magic(id: id), do: get_magic(id)
+
+  def get_magic(name: name) do
+    case Repo.get_by(Magic, name: name) do
+      %Magic{} = magic -> {:ok, magic}
+      nil -> {:error, :not_found}
+    end
+  rescue
+    _ -> {:error, :unprocessable_entity}
+  end
+
   def get_magic(id) do
     case Repo.get(Magic, id) do
       %Magic{} = magic -> {:ok, magic}
