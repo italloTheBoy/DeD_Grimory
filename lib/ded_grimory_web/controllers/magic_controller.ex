@@ -6,11 +6,13 @@ defmodule DedGrimoryWeb.MagicController do
 
   action_fallback DedGrimoryWeb.FallbackController
 
+  @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
   def index(conn, _params) do
     magics = Grimory.list_magics()
     render(conn, :list, magics: magics)
   end
 
+  @spec create(any, map) :: Plug.Conn.t() | {:error, term()}
   def create(conn, %{"magic" => magic_params}) do
     with {:ok, %Magic{} = magic} <- Grimory.create_magic(magic_params) do
       conn
@@ -20,12 +22,14 @@ defmodule DedGrimoryWeb.MagicController do
     end
   end
 
+  @spec show(any, map) :: Plug.Conn.t() | {:error, term()}
   def show(conn, %{"id" => id}) do
     with {:ok, %Magic{} = magic} <- Grimory.get_magic(id) do
       render(conn, :show, magic: magic)
     end
   end
 
+  @spec update(any, map) :: Plug.Conn.t() | {:error, term()}
   def update(conn, %{"id" => id, "magic" => magic_params}) do
     with {:ok, %Magic{} = magic} <- Grimory.get_magic(id),
          {:ok, %Magic{} = updated_magic} <- Grimory.update_magic(magic, magic_params) do
@@ -33,6 +37,7 @@ defmodule DedGrimoryWeb.MagicController do
     end
   end
 
+  @spec delete(any, map) :: Plug.Conn.t() | {:error, term()}
   def delete(conn, %{"id" => id}) do
     with {:ok, %Magic{} = magic} <- Grimory.get_magic(id),
          {:ok, %Magic{}} <- Grimory.delete_magic(magic) do

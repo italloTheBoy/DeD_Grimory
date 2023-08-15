@@ -60,6 +60,7 @@ defmodule DedGrimory.Grimory do
     _ -> {:error, :unprocessable_entity}
   end
 
+  @spec create_magic(map()) :: {:ok, Magic.t()} | {:error, Ecto.Changeset.t()}
   @doc """
   Creates a magic.
 

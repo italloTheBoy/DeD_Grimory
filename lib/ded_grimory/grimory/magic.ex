@@ -2,6 +2,8 @@ defmodule DedGrimory.Grimory.Magic do
   # IMPORTANTE
   # * Otimizar a checagem dos livros
   # * Otimizar a checagem do tempo de conjuração
+  # * Padronizar a maneira como os nomes são registrados
+
 
   use Ecto.Schema
 
