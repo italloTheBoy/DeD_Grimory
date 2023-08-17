@@ -32,13 +32,19 @@ defmodule DedGrimory.Repo.Migrations.CreateMagics do
 
     create constraint(
              :magics,
-             :ckeck_level,
+             :check_name_format,
+             check: "name ~* '^[a-z][a-z_]+[a-z]$|^[a-z]$|^[a-z][a-z]$'"
+           )
+
+    create constraint(
+             :magics,
+             :check_level_range,
              check: "level >= 0 AND level <= 9"
            )
 
     create constraint(
              :magics,
-             :check_components,
+             :check_components_types,
              check: "
         ARRAY_LENGTH(components, 1) >= 1
         and ARRAY_LENGTH(components, 1) <= 3
@@ -48,7 +54,7 @@ defmodule DedGrimory.Repo.Migrations.CreateMagics do
 
     create constraint(
              :magics,
-             :check_school,
+             :check_school_types,
              check: "school IN (
         'abjuration',
         'alteration',

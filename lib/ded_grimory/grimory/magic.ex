@@ -4,7 +4,6 @@ defmodule DedGrimory.Grimory.Magic do
   # * Otimizar a checagem do tempo de conjuração
   # * Padronizar a maneira como os nomes são registrados
 
-
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -78,6 +77,7 @@ defmodule DedGrimory.Grimory.Magic do
   def changeset(magic = %Magic{}, attrs) do
     magic
     |> cast(attrs, @permitted_columns)
+    |> format_name()
     |> validate_name()
     |> validate_level()
     |> validate_description()
@@ -88,9 +88,23 @@ defmodule DedGrimory.Grimory.Magic do
     |> validate_casting_time()
   end
 
+  defp format_name(%Ecto.Changeset{} = changeset) do
+    formated_name =
+      changeset
+      |> get_field(:name, " ")
+      |> String.trim()
+      |> String.downcase()
+      |> String.replace(" ", "_")
+
+    put_change(changeset, :name, formated_name)
+  end
+
   defp validate_name(%Ecto.Changeset{} = changeset) do
     changeset
-    |> validate_required([:name], message: "Informe o nome da magia")
+    |> validate_required([:name], message: "Informe o nome desta magia")
+    |> validate_format(:name, ~r/^[a-z][a-z_]+[a-z]$|^[a-z]$|^[a-z][a-z]$/,
+      message: "O nome desta magia não pode conter caracteres especiais"
+    )
     |> unique_constraint(:name, message: "Esta magia ja foi registrada")
   end
 
