@@ -78,6 +78,7 @@ defmodule DedGrimory.Grimory.Magic do
     magic
     |> cast(attrs, @permitted_columns)
     |> format_name()
+    |> format_description()
     |> validate_name()
     |> validate_level()
     |> validate_description()
@@ -91,12 +92,21 @@ defmodule DedGrimory.Grimory.Magic do
   defp format_name(%Ecto.Changeset{} = changeset) do
     formated_name =
       changeset
-      |> get_field(:name, " ")
+      |> get_change(:name, "")
       |> String.trim()
       |> String.downcase()
       |> String.replace(" ", "_")
 
     put_change(changeset, :name, formated_name)
+  end
+
+  defp format_description(%Ecto.Changeset{} = changeset) do
+    formated_description =
+      changeset
+      |> get_change(:description, "")
+      |> String.trim()
+
+    put_change(changeset, :description, formated_description)
   end
 
   defp validate_name(%Ecto.Changeset{} = changeset) do
