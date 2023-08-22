@@ -1,4 +1,9 @@
 defmodule DedGrimoryWeb.MagicController do
+  # IMPORTANTE
+  # * Permitir que apenas o dono do livro atualize uma magia
+  # * Permitir que apenas o dono do livro delete uma magia
+  # * Permitir que apenas o dono do livro pode inserir uma magia nele
+
   use DedGrimoryWeb, :controller
 
   alias DedGrimory.Grimory
