@@ -24,7 +24,7 @@ defmodule DedGrimory.Grimory.Magic do
     :concentration
   ]
 
-  @derive {Jason.Encoder, only: @permitted_columns}
+  @derive {Jason.Encoder, only: [:id | @permitted_columns]}
 
   schema "magics" do
     field :name, :string
@@ -89,17 +89,40 @@ defmodule DedGrimory.Grimory.Magic do
   end
 
   defp format_name(%Ecto.Changeset{} = changeset) do
-    formated_name =
-      changeset
-      |> get_change(:name, "")
-      |> String.trim()
-      |> String.downcase()
-      |> String.replace(" ", "_")
+    case get_change(changeset, :name, "w") do
+      name when is_binary(name) ->
+        formated_name =
+          changeset
+          |> get_change(:name, "")
+          |> dbg()
+          |> String.trim()
+          |> String.downcase()
+          |> String.replace(" ", "_")
 
-    put_change(changeset, :name, formated_name)
+        put_change(changeset, :name, formated_name)
+
+      _ ->
+        changeset
+    end
   end
 
   defp format_description(%Ecto.Changeset{} = changeset) do
+    case get_change(changeset, :description, "") do
+      description when is_binary(description) ->
+        description =
+          changeset
+          |> get_change(:description, "")
+          |> dbg()
+          |> String.trim()
+          |> String.downcase()
+          |> String.replace(" ", "_")
+
+        put_change(changeset, :description, description)
+
+      _ ->
+        changeset
+    end
+
     formated_description =
       changeset
       |> get_change(:description, "")

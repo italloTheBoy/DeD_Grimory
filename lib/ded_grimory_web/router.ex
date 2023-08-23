@@ -1,6 +1,6 @@
 defmodule DedGrimoryWeb.Router do
   use DedGrimoryWeb, :router
-  
+
   pipeline :api do
     plug :accepts, ["json"]
   end
