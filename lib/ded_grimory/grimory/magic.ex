@@ -74,8 +74,10 @@ defmodule DedGrimory.Grimory.Magic do
           :invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}
         ) :: Ecto.Changeset.t()
   def changeset(magic = %Magic{}, attrs) do
+
     magic
     |> cast(attrs, @permitted_columns)
+    |> dbg()
     |> format_name()
     |> format_description()
     |> validate_name()
@@ -89,52 +91,38 @@ defmodule DedGrimory.Grimory.Magic do
   end
 
   defp format_name(%Ecto.Changeset{} = changeset) do
-    case get_change(changeset, :name, "w") do
-      name when is_binary(name) ->
+    case get_change(changeset, :name) do
+      nil ->
+        changeset
+
+      name ->
         formated_name =
-          changeset
-          |> get_change(:name, "")
-          |> dbg()
+          name
           |> String.trim()
           |> String.downcase()
           |> String.replace(" ", "_")
 
         put_change(changeset, :name, formated_name)
-
-      _ ->
-        changeset
     end
   end
 
   defp format_description(%Ecto.Changeset{} = changeset) do
-    case get_change(changeset, :description, "") do
-      description when is_binary(description) ->
-        description =
-          changeset
-          |> get_change(:description, "")
-          |> dbg()
-          |> String.trim()
-          |> String.downcase()
-          |> String.replace(" ", "_")
-
-        put_change(changeset, :description, description)
-
-      _ ->
+    case get_change(changeset, :description) do
+      nil ->
         changeset
+
+      description ->
+        formated_description = String.trim(description)
+
+        put_change(changeset, :description, formated_description)
     end
-
-    formated_description =
-      changeset
-      |> get_change(:description, "")
-      |> String.trim()
-
-    put_change(changeset, :description, formated_description)
   end
 
   defp validate_name(%Ecto.Changeset{} = changeset) do
     changeset
     |> validate_required([:name], message: "Informe o nome desta magia")
-    |> validate_format(:name, ~r/^[a-z][a-z_]+[a-z]$|^[a-z]$|^[a-z][a-z]$/,
+    |> check_constraint(:name,
+      name: :check_name_format,
       message: "O nome desta magia não pode conter caracteres especiais"
     )
     |> unique_constraint(:name, message: "Esta magia ja foi registrada")
