@@ -131,9 +131,8 @@ defmodule DedGrimory.Grimory.Magic do
   defp validate_level(%Ecto.Changeset{} = changeset) do
     changeset
     |> validate_required([:level], message: "Informe o nivel de conjuração desta magia")
-    |> validate_inclusion(
-      :level,
-      0..9,
+    |> check_constraint(:level,
+      name: :check_level_range,
       message: "O nivel da magia deve estar entre 0 e 9"
     )
   end
@@ -155,7 +154,8 @@ defmodule DedGrimory.Grimory.Magic do
   defp validate_components(%Ecto.Changeset{} = changeset) do
     changeset
     |> validate_required([:components], message: "Informe a lista de componetes desta magia")
-    |> validate_subset(:components, @permitted_components,
+    |> check_constraint(:components,
+      name: :check_components_types,
       message: "Esta lista de componentes é invalida"
     )
   end
@@ -172,7 +172,8 @@ defmodule DedGrimory.Grimory.Magic do
     |> validate_required([:school],
       message: "Informe a escola desta magia"
     )
-    |> validate_inclusion(:school, @permitted_schools,
+    |> check_constraint(:school,
+      name: :check_school_types,
       message: "Esta escola de magia é desconhecida"
     )
   end
