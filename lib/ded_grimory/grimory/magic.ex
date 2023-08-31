@@ -7,6 +7,7 @@ defmodule DedGrimory.Grimory.Magic do
 
   import Ecto.Changeset
 
+  alias DedGrimory.Grimory.Book
   alias DedGrimory.Grimory.Magic
 
   @permitted_columns [
@@ -33,12 +34,13 @@ defmodule DedGrimory.Grimory.Magic do
     field :buff_description, :string
     field :range, :float
     field :components, {:array, :string}
-    field :book, :string
     field :school, :string
     field :casting_time, :string
     field :material, :string
     field :ritual, :boolean, default: false
     field :concentration, :boolean, default: false
+
+    belongs_to :book, Book
   end
 
   @type t() :: %Magic{
@@ -56,28 +58,14 @@ defmodule DedGrimory.Grimory.Magic do
           concentration: boolean()
         }
 
-  @permitted_schools [
-    "abjuration",
-    "alteration",
-    "conjuration",
-    "divination",
-    "enchantment",
-    "illusion",
-    "invocation",
-    "necromancy"
-  ]
-
-  @permitted_components ["M", "V", "S"]
-
   @spec changeset(
           %Magic{},
           :invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}
         ) :: Ecto.Changeset.t()
+  @doc false
   def changeset(magic = %Magic{}, attrs) do
-
     magic
     |> cast(attrs, @permitted_columns)
-    |> dbg()
     |> format_name()
     |> format_description()
     |> validate_name()

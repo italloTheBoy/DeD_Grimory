@@ -54,4 +54,56 @@ defmodule DedGrimory.GrimoryTest do
       assert %Ecto.Changeset{} = Grimory.change_magic(magic)
     end
   end
+
+  describe "books" do
+    alias DedGrimory.Grimory.Book
+
+    import DedGrimory.GrimoryFixtures
+
+    @invalid_attrs %{}
+
+    test "list_books/0 returns all books" do
+      book = book_fixture()
+      assert Grimory.list_books() == [book]
+    end
+
+    test "get_book!/1 returns the book with given id" do
+      book = book_fixture()
+      assert Grimory.get_book!(book.id) == book
+    end
+
+    test "create_book/1 with valid data creates a book" do
+      valid_attrs = %{}
+
+      assert {:ok, %Book{} = book} = Grimory.create_book(valid_attrs)
+    end
+
+    test "create_book/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Grimory.create_book(@invalid_attrs)
+    end
+
+    test "update_book/2 with valid data updates the book" do
+      book = book_fixture()
+      update_attrs = %{}
+
+      assert {:ok, %Book{} = book} = Grimory.update_book(book, update_attrs)
+    end
+
+    test "update_book/2 with invalid data returns error changeset" do
+      book = book_fixture()
+      assert {:error, %Ecto.Changeset{}} = Grimory.update_book(book, @invalid_attrs)
+      assert book == Grimory.get_book!(book.id)
+    end
+
+    test "delete_book/1 deletes the book" do
+      book = book_fixture()
+      assert {:ok, %Book{}} = Grimory.delete_book(book)
+      assert_raise Ecto.NoResultsError, fn -> Grimory.get_book!(book.id) end
+    end
+
+    test "change_book/1 returns a book changeset" do
+      book = book_fixture()
+      assert %Ecto.Changeset{} = Grimory.change_book(book)
+    end
+  end
 end

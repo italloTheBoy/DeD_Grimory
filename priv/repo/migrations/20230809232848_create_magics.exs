@@ -4,7 +4,6 @@ defmodule DedGrimory.Repo.Migrations.CreateMagics do
   def change do
     create table(:magics) do
       add(:name, :varchar, null: false)
-      add(:book, :varchar, null: false)
       add(:school, :varchar, null: false)
       add(:casting_time, :varchar, null: false)
       add(:material, :text)
@@ -18,7 +17,6 @@ defmodule DedGrimory.Repo.Migrations.CreateMagics do
     end
 
     create unique_index(:magics, :name)
-    create index(:magics, :book)
     create index(:magics, :school)
     create index(:magics, :casting_time)
     create index(:magics, :material)

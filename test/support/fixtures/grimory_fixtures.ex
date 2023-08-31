@@ -17,4 +17,18 @@ defmodule DedGrimory.GrimoryFixtures do
 
     magic
   end
+
+  @doc """
+  Generate a book.
+  """
+  def book_fixture(attrs \\ %{}) do
+    {:ok, book} =
+      attrs
+      |> Enum.into(%{
+
+      })
+      |> DedGrimory.Grimory.create_book()
+
+    book
+  end
 end

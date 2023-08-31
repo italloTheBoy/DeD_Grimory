@@ -11,6 +11,8 @@ defmodule DedGrimoryWeb.Router do
     get "/magics", MagicController, :index
     get "/magic/id/:id", MagicController, :show
     get "/magic/name/:name", MagicController, :show
-    resources "/magic", MagicController, except: [:index]
+    resources "/magic", MagicController, except: [:index, :new, :edit]
+
+    resources "/books", BookController, except: [:new, :edit]
   end
 end
