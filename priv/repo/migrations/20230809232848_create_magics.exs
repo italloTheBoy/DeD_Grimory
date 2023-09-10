@@ -31,7 +31,7 @@ defmodule DedGrimory.Repo.Migrations.CreateMagics do
     create constraint(
              :magics,
              :check_name_format,
-             check: "name ~ '^[a-z]+[a-z_][a-z]+$|^[a-z]+$'"
+             check: "name ~ '^[a-z]+[a-z_]+[a-z]+$|^[a-z]+$'"
            )
 
     create constraint(

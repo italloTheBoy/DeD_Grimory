@@ -13,7 +13,8 @@ defmodule DedGrimory.Repo.Migrations.CreateBooks do
     create constraint(
              :books,
              :check_name_format,
-             check: "name ~ '^[a-z]+[a-z_][a-z]+$|^[a-z]+$'"
+             check: "name ~ '^[a-z]+[a-z_]+[a-z]+$|^[a-z]+$'"
+
            )
 
     alter table(:magics) do
