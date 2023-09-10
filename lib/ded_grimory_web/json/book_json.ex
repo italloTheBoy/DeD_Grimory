@@ -1,13 +1,15 @@
 defmodule DedGrimoryWeb.BookJSON do
   alias DedGrimory.Grimory.Book
 
+  @spec list(%{:books => [Book.t()]}) :: %{data: [Book.t()]}
   @doc """
   Renders a list of books.
   """
-  def index(%{books: books}) do
+  def list(%{books: books}) do
     %{data: for(book <- books, do: data(book))}
   end
 
+  @spec show(%{:book => Book.t()}) :: %{data: Book.t()}
   @doc """
   Renders a single book.
   """
@@ -15,9 +17,5 @@ defmodule DedGrimoryWeb.BookJSON do
     %{data: data(book)}
   end
 
-  defp data(%Book{} = book) do
-    %{
-      id: book.id
-    }
-  end
+  defp data(%Book{} = book), do: book
 end
