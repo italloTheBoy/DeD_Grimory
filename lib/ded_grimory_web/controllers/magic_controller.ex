@@ -1,5 +1,6 @@
 defmodule DedGrimoryWeb.MagicController do
   # IMPORTANTE
+  # * Permitir inserir livros
   # * Permitir pesquisar magias com uso de filtros
   # * Permitir que apenas o dono do livro atualize uma magia
   # * Permitir que apenas o dono do livro delete uma magia
@@ -24,7 +25,7 @@ defmodule DedGrimoryWeb.MagicController do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/magic/#{magic.id}")
-      |> render(:identfy, magic: magic)
+      |> render(:show, magic: magic)
     end
   end
 
@@ -45,7 +46,7 @@ defmodule DedGrimoryWeb.MagicController do
   def update(conn, %{"id" => id, "magic" => magic_params}) do
     with {:ok, %Magic{} = magic} <- Grimory.get_magic(id),
          {:ok, %Magic{} = updated_magic} <- Grimory.update_magic(magic, magic_params) do
-      render(conn, :identfy, magic: updated_magic)
+      render(conn, :show, magic: updated_magic)
     end
   end
 
