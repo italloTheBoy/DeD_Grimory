@@ -171,6 +171,51 @@ defmodule DedGrimory.Grimory do
     Repo.all(Book)
   end
 
+  @spec get_book([id: integer()] | [name: String.t()] | integer()) ::
+          {:error, atom()} | {:ok, Book.t()}
+  @doc """
+  Gets a single book.
+
+  ## Examples
+
+      iex> get_book(id)
+      {:ok, %Magic{}}
+
+      iex> get_book(id: id)
+      {:ok, %Magic{}}
+
+      iex> get_book(name: "name")
+      {:ok, %Magic{}}
+
+      iex> get_book(bad_id)
+      {:error, :not_found}
+
+      iex> get_book(id: bad_id)
+      {:error, :not_found}
+
+      iex> get_book(name: bad_name)
+      {:error, :not_found}
+  """
+  def get_book(id: id), do: get_book(id)
+
+  def get_book(name: name) do
+    case Repo.get_by(Book, name: name) do
+      %Book{} = book -> {:ok, book}
+      nil -> {:error, :not_found}
+    end
+  rescue
+    _ -> {:error, :unprocessable_entity}
+  end
+
+  def get_book(id) do
+    case Repo.get(Book, id) do
+      %Book{} = book -> {:ok, book}
+      nil -> {:error, :not_found}
+    end
+  rescue
+    _ -> {:error, :unprocessable_entity}
+  end
+
   @doc """
   Gets a single book.
 
