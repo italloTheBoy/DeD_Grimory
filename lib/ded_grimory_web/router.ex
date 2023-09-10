@@ -1,6 +1,8 @@
 defmodule DedGrimoryWeb.Router do
   use DedGrimoryWeb, :router
 
+  @resources_opts [except: [:index, :new, :edit]]
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -11,8 +13,11 @@ defmodule DedGrimoryWeb.Router do
     get "/magics", MagicController, :index
     get "/magic/id/:id", MagicController, :show
     get "/magic/name/:name", MagicController, :show
-    resources "/magic", MagicController, except: [:index, :new, :edit]
+    resources "/magic", MagicController, @resources_opts
 
-    resources "/books", BookController, except: [:new, :edit]
+    get "/books", BookController, :index
+    get "/book/id/:id", BookController, :show
+    get "/book/name/:name", BookController, :show
+    resources "/book", BookController, @resources_opts
   end
 end
