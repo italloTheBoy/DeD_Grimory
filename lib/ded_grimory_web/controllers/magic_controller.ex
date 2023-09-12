@@ -1,6 +1,5 @@
 defmodule DedGrimoryWeb.MagicController do
   # IMPORTANTE
-  # * Permitir inserir livros
   # * Permitir pesquisar magias com uso de filtros
   # * Permitir que apenas o dono do livro atualize uma magia
   # * Permitir que apenas o dono do livro delete uma magia

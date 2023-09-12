@@ -16,7 +16,7 @@ defmodule DedGrimory.Grimory.Magic do
     :description,
     :range,
     :components,
-    :book,
+    :book_id,
     :school,
     :casting_time,
     :material,
@@ -50,7 +50,7 @@ defmodule DedGrimory.Grimory.Magic do
           buff_description: String.t(),
           range: float(),
           components: [String.t(), ...],
-          book: String.t(),
+          book_id: non_neg_integer(),
           school: String.t(),
           casting_time: String.t(),
           material: String.t(),
@@ -150,9 +150,8 @@ defmodule DedGrimory.Grimory.Magic do
 
   defp validate_book(%Ecto.Changeset{} = changeset) do
     changeset
-    |> validate_required([:book],
-      message: "Informe o livro em que esta magia esta registrada"
-    )
+    |> validate_required([:book_id], message: "Informe o livro em que esta magia esta registrada")
+    |> assoc_constraint(:book, message: "Esta magia esta sendo inserida em um livro invalido")
   end
 
   defp validate_school(%Ecto.Changeset{} = changeset) do
