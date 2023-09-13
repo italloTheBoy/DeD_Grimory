@@ -36,6 +36,19 @@ defmodule DedGrimory.Repo.Migrations.CreateMagics do
 
     create constraint(
              :magics,
+             :check_casting_time_format,
+             check: "casting_time IN (
+                      '1 action',
+                      '1 reaction',
+                      '1 bonus action',
+                      '1 minute',
+                      '10 minutes',
+                      '1 hour'
+                    )"
+           )
+
+    create constraint(
+             :magics,
              :check_level_range,
              check: "level >= 0 AND level <= 9"
            )
@@ -44,25 +57,25 @@ defmodule DedGrimory.Repo.Migrations.CreateMagics do
              :magics,
              :check_components_types,
              check: "
-        ARRAY_LENGTH(components, 1) >= 1
-        and ARRAY_LENGTH(components, 1) <= 3
-        and components <@ ARRAY['M', 'V', 'S']
-      "
+                      ARRAY_LENGTH(components, 1) >= 1
+                      and ARRAY_LENGTH(components, 1) <= 3
+                      and components <@ ARRAY['M', 'V', 'S']
+                    "
            )
 
     create constraint(
              :magics,
              :check_school_types,
              check: "school IN (
-        'abjuration',
-        'alteration',
-        'conjuration',
-        'divination',
-        'enchantment',
-        'illusion',
-        'invocation',
-        'necromancy'
-      )"
+                      'abjuration',
+                      'alteration',
+                      'conjuration',
+                      'divination',
+                      'enchantment',
+                      'illusion',
+                      'invocation',
+                      'necromancy'
+                    )"
            )
   end
 end

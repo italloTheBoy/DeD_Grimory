@@ -1,7 +1,8 @@
 defmodule DedGrimory.Grimory.Magic do
   # IMPORTANTE
-  # * Otimizar a checagem dos livros
-  # * Otimizar a checagem do tempo de conjuração
+  # * Implemetar os campos relevantes que ainda não estão na tabela
+  # * Revisar os campos da tabela de magias
+  # * Otimizar o campo "range"
 
   use Ecto.Schema
 
@@ -168,7 +169,12 @@ defmodule DedGrimory.Grimory.Magic do
   defp validate_casting_time(%Ecto.Changeset{} = changeset) do
     changeset
     |> validate_required([:casting_time],
-      message: "Informe o tempo de conjuração desta magia"
+      message: "Informe o tempo de conjuração da magia"
+    )
+    |>dbg()
+    |> check_constraint(:casting_time,
+      name: :check_casting_time_format,
+      message: "O tempo de conjuração informado é invalido"
     )
   end
 end
