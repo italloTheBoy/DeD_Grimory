@@ -1,6 +1,7 @@
 defmodule DedGrimory.Grimory.Magic do
   # IMPORTANTE
   # * Implemetar os campos relevantes que ainda não estão na tabela
+  # * Implemetar o campo "effect area"
   # * Revisar os campos da tabela de magias
   # * Otimizar o campo "range"
 
@@ -10,6 +11,7 @@ defmodule DedGrimory.Grimory.Magic do
 
   alias DedGrimory.Grimory.Book
   alias DedGrimory.Grimory.Magic
+  alias DedGrimory.Type
 
   @permitted_columns [
     :name,
@@ -33,7 +35,7 @@ defmodule DedGrimory.Grimory.Magic do
     field :level, :integer
     field :description, :string
     field :buff_description, :string
-    field :range, :float
+    field :range, Type.Range
     field :components, {:array, :string}
     field :school, :string
     field :casting_time, :string
@@ -107,6 +109,36 @@ defmodule DedGrimory.Grimory.Magic do
     end
   end
 
+  # Se "1 meters" -> "1 meter"
+  # Se "2 meter" -> "1 meters"
+  # Se "," -> "."
+  # Se "1.8" -> "1.5"
+  defp format_range(%Ecto.Changeset{} = changeset) do
+    range =
+      changeset
+      |> get_change(:range)
+      |> String.trim()
+
+    cond do
+      range == "1 meters" ->
+        changeset
+        |> put_change(:range, "1 meter")
+        |> format_range()
+
+      range =~ ~r/^[0-9.]+ meter$/ ->
+        changeset
+        |> put_change(:range, range <> "s")
+        |> format_range()
+
+      range =~ ~r/,/ ->
+        formated_range = String.replace(range, ",", ".")
+
+        changeset
+        |> put_change(:range, formated_range)
+        |> format_range()
+    end
+  end
+
   defp validate_name(%Ecto.Changeset{} = changeset) do
     changeset
     |> validate_required([:name], message: "Informe o nome desta magia")
@@ -133,10 +165,10 @@ defmodule DedGrimory.Grimory.Magic do
 
   defp validate_range(%Ecto.Changeset{} = changeset) do
     changeset
-    |> validate_required([:range], message: "Informe o alcançe desta magia")
-    |> validate_number(:range,
-      greater_than_or_equal_to: 0,
-      message: "O alcançe da magia não pode ser inferior a 0"
+    |> validate_required([:range], message: "Informe o alcançe da magia")
+    |> check_constraint(:range,
+      name: :check_range_format,
+      message: "Tempo de conjuração informado invalido"
     )
   end
 
@@ -171,7 +203,6 @@ defmodule DedGrimory.Grimory.Magic do
     |> validate_required([:casting_time],
       message: "Informe o tempo de conjuração da magia"
     )
-    |>dbg()
     |> check_constraint(:casting_time,
       name: :check_casting_time_format,
       message: "O tempo de conjuração informado é invalido"

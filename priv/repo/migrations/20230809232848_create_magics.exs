@@ -1,6 +1,8 @@
 defmodule DedGrimory.Repo.Migrations.CreateMagics do
   use Ecto.Migration
 
+  alias DedGrimory.Type
+
   def change do
     create table(:magics) do
       add(:name, :varchar, null: false)
@@ -10,7 +12,7 @@ defmodule DedGrimory.Repo.Migrations.CreateMagics do
       add(:buff_description, :text)
       add(:description, :text, null: false)
       add(:level, :integer, null: false)
-      add(:range, :float, null: false)
+      add(:range, Type.Range, null: false)
       add(:components, {:array, :text}, null: false)
       add(:ritual, :boolean, default: false)
       add(:concentration, :boolean, default: false)
@@ -45,6 +47,19 @@ defmodule DedGrimory.Repo.Migrations.CreateMagics do
                       '10 minutes',
                       '1 hour'
                     )"
+           )
+
+    create constraint(
+             :magics,
+             :check_range_format,
+             check: "range IN (
+                      'self',
+                      'touch',
+                      'sight',
+                      )
+                    OR range ~ '^1 meter$'
+                    OR range ~ '^[0-9]+ meters$'
+                    OR range ~ '^[0-9].[0-9]+ meters'"
            )
 
     create constraint(
