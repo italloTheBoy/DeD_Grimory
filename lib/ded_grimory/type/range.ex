@@ -48,10 +48,13 @@ defmodule DedGrimory.Type.Range do
   def load(_), do: :error
 
   @spec dump(Range.t()) :: :error | {:ok, integer()}
-  def dump(%Range{} = data) when is_valid(data),
-    do: {:ok, to_block(meter: data.meter)}
-
-  def dump(_), do: :error
+  def dump(data) do
+    if valid?(data) do
+      {:ok, to_block(meter: data.meter)}
+    else
+      :error
+    end
+  end
 
   # Helpers
   defp valid?(%Range{meter: meter, feet: feet})
