@@ -3,36 +3,32 @@ defmodule DedGrimory.Type.Range do
 
   alias DedGrimory.Type.Range
 
-  @enforce_keys [:meter, :feet]
-  @derive [:meter, :feet]
   defstruct [:meter, :feet]
 
   @type t() :: %Range{
-    meter: number(),
-    feet: number()
-  }
+          meter: number(),
+          feet: number()
+        }
 
   @spec type :: :integer
   def type, do: :integer
 
-  @spec cast(Range.t()) :: :error | {:ok, Range.t()}
-  def cast(%Range{meter: meter, feet: feet} = data)
-      when is_number(meter) and is_number(feet) do
-    if to_block(meter: meter) == to_block(meter: meter) do
-      {:ok, data}
-    else
-      :error
-    end
-  end
+  @spec cast(Range.t() | integer()) :: :error | {:ok, Range.t()}
+  def cast(data) when is_integer(data),
+    do:
+      %Range{
+        meter: to_meter(block: data),
+        feet: to_feet(block: data)
+      }
+      |> cast()
 
-  def cast(%Range{meter: meter, feet: nil} = data)
-      when is_number(meter),
-      do: {:ok, %{data | feet: to_feet(meter: meter)}}
+  def cast(%Range{meter: meter, feet: nil}) when is_number(meter),
+    do: to_block(meter: meter) |> cast()
 
-  def cast(%Range{meter: nil, feet: feet} = data)
-      when is_number(feet),
-      do: {:ok, %{data | meter: to_meter(feet: feet)}}
+  def cast(%Range{meter: nil, feet: feet}) when is_number(feet),
+    do: to_block(feet: feet) |> cast()
 
+  def cast(%Range{} = data) when is_valid(), do: {:ok, data}
   def cast(_), do: :error
 
   @spec load(integer()) :: :error | {:ok, Range.t()}
@@ -47,9 +43,12 @@ defmodule DedGrimory.Type.Range do
   def load(_), do: :error
 
   @spec dump(Range.t()) :: :error | {:ok, integer}
-  def dump(%Range{feet: feet}), do: {:ok, to_block(feet: feet)}
+  def dump(%Range{} = data) when is_valid(data),
+    do: {:ok, to_block(meter: data.meter)}
+
   def dump(_), do: :error
 
+  # Helpers
   defp to_block(meter: data), do: trunc(data * 10) |> div(15)
   defp to_block(feet: data), do: trunc(data) |> div(5)
 
@@ -60,4 +59,7 @@ defmodule DedGrimory.Type.Range do
   defp do_to_meter(data), do: data * 1.5
   defp to_meter(feet: data), do: to_block(feet: data) |> do_to_meter()
   defp to_meter(block: data), do: do_to_meter(data)
+
+  defp is_valid(%Range{meter: meter, feet: feet}) when is_number(meter) and is_number(feet),
+    do: to_block(meter: meter) == to_block(feet: feet)
 end
