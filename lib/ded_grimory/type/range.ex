@@ -65,7 +65,11 @@ defmodule DedGrimory.Type.Range do
         {:ok, data}
 
       is_struct(data, Range) and valid?(data) ->
-        {:ok, to_block(meter: data.meter)}
+        block =
+          to_block(meter: data.meter)
+          |> Integer.to_string()
+
+        {:ok, block}
 
       true ->
         :error
