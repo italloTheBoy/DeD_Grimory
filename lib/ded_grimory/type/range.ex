@@ -5,13 +5,17 @@ defmodule DedGrimory.Type.Range do
 
   defstruct [:meter, :feet]
 
-  @type t() :: %Range{
-          meter: number(),
-          feet: number()
-        }
+  @type t() ::
+          %Range{
+            meter: number(),
+            feet: number()
+          }
+          | String.t()
 
-  @spec type :: :integer
-  def type, do: :integer
+  @special_range ["self", "touch", "sight"]
+
+  @spec type :: :varchar
+  def type, do: :varchar
 
   @spec cast(Range.t() | integer()) :: :error | {:ok, Range.t()}
   def cast(data) when is_integer(data),
@@ -36,23 +40,35 @@ defmodule DedGrimory.Type.Range do
     end
   end
 
-  @spec load(integer()) :: :error | {:ok, Range.t()}
-  def load(block) when is_integer(block) do
-    meter = to_meter(block: block)
-    feet = to_feet(block: block)
-    range = %Range{meter: meter, feet: feet}
+  @spec load(String.t()) :: :error | {:ok, Range.t()}
+  def load(data) when data in @special_range, do: {:ok, data}
 
-    {:ok, range}
+  def load(data) do
+    case Integer.parse(data) do
+      {block, _} ->
+        meter = to_meter(block: block)
+        feet = to_feet(block: block)
+
+        range = %Range{meter: meter, feet: feet}
+
+        {:ok, range}
+
+      _ ->
+        :error
+    end
   end
-
-  def load(_), do: :error
 
   @spec dump(Range.t()) :: :error | {:ok, integer()}
   def dump(data) do
-    if valid?(data) do
-      {:ok, to_block(meter: data.meter)}
-    else
-      :error
+    cond do
+      data in @special_range and valid?(data) ->
+        {:ok, data}
+
+      is_struct(data, Range) and valid?(data) ->
+        {:ok, to_block(meter: data.meter)}
+
+      true ->
+        :error
     end
   end
 
@@ -61,6 +77,7 @@ defmodule DedGrimory.Type.Range do
        when is_number(meter) and is_number(feet),
        do: to_block(meter: meter) == to_block(feet: feet)
 
+  defp valid?(data) when data in @special_range, do: true
   defp valid?(_data), do: false
 
   defp to_block(meter: data), do: trunc(data * 10) |> div(15)
