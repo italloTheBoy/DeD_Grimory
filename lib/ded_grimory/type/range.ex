@@ -28,8 +28,13 @@ defmodule DedGrimory.Type.Range do
   def cast(%Range{meter: nil, feet: feet}) when is_number(feet),
     do: to_block(feet: feet) |> cast()
 
-  def cast(%Range{} = data) when is_valid(), do: {:ok, data}
-  def cast(_), do: :error
+  def cast(data) do
+    if valid?(data) do
+      {:ok, data}
+    else
+      :error
+    end
+  end
 
   @spec load(integer()) :: :error | {:ok, Range.t()}
   def load(block) when is_integer(block) do
@@ -49,6 +54,12 @@ defmodule DedGrimory.Type.Range do
   def dump(_), do: :error
 
   # Helpers
+  defp valid?(%Range{meter: meter, feet: feet})
+       when is_number(meter) and is_number(feet),
+       do: to_block(meter: meter) == to_block(feet: feet)
+
+  defp valid?(_data), do: false
+
   defp to_block(meter: data), do: trunc(data * 10) |> div(15)
   defp to_block(feet: data), do: trunc(data) |> div(5)
 
@@ -59,7 +70,4 @@ defmodule DedGrimory.Type.Range do
   defp do_to_meter(data), do: data * 1.5
   defp to_meter(feet: data), do: to_block(feet: data) |> do_to_meter()
   defp to_meter(block: data), do: do_to_meter(data)
-
-  defp is_valid(%Range{meter: meter, feet: feet}) when is_number(meter) and is_number(feet),
-    do: to_block(meter: meter) == to_block(feet: feet)
 end
